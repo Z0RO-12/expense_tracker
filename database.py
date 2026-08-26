@@ -1,7 +1,7 @@
 import sqlite3
 
 
-def load_transactions():
+def load_all_db_transactions():
     # connect to database
     connection = sqlite3.connect("expense_tracker.db")
     cursor = connection.cursor()
@@ -29,5 +29,5 @@ def add_transactions_to_db(description, amount, category):
     connection.close()
 
 add_transactions_to_db("Costa", 4.50, "Food")
-transactions = load_transactions()
+transactions = load_all_db_transactions()
 print(transactions)

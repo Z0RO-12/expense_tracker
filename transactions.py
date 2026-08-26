@@ -1,9 +1,15 @@
 # This contains functions such as add, show, total, search and delete logic
+from unicodedata import category
+
 from storage import (
-    load_transactions,
+
     save_transactions,
 )
-from database import add_transactions_to_db
+
+from database import (
+    add_transactions_to_db,
+    load_all_db_transactions
+)
 
 def add_transaction(transactions):
     description = input("description: ")
@@ -17,9 +23,13 @@ def add_transaction(transactions):
 
         except ValueError:
             print("invalid value entered")
+    category = input("category: ")
 
-    transaction = {"description": description,
-                       "amount": amount}
+    '''transaction = {"description": description,
+                    "amount": amount,
+                    "category": category}'''
+
+    add_transactions_to_db(description, amount, category)
 
     '''transactions.append(transaction)
     # save transactions function saves the newly added transactions (RAM)
@@ -31,13 +41,20 @@ def show_transactions(transactions):
     # number transaction in a loop by each description and amount
     # print each transaction that is numbered
 
+    transactions = load_all_db_transactions()
+
+
     if not transactions:
         print("No transactions found")
         return
 
-    for number_it,transaction in enumerate(transactions, start=1):
+    for row_transaction in transactions:
         print(
-            f"{number_it}.{transaction["description"]} - £{transaction["amount"]:.2f}")
+            f"{row_transaction[0]}. "
+            f"{row_transaction[1]} - "
+            f"{row_transaction[2]} - "
+            f"{row_transaction[3]}"
+        )
 
 def transactions_total(transactions):
     total = 0
