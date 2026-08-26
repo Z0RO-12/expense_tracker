@@ -1,0 +1,8 @@
+.venv/
+.idea/
+__pycache__/
+*.pyc
+
+# Local application data
+*.db
+transactions_list.json
