@@ -1,20 +1,18 @@
-# This contains functions such as add, show, total, search and delete logic
-from unicodedata import category
-
-from storage import (
-
-    save_transactions,
-)
 
 from database import (
     add_transactions_to_db,
-    load_all_db_transactions
+    load_all_db_transactions,
+    show_transactions_total,
+    search_transactions_in_db,
+    delete_transactions_from_db,
 )
 
 def add_transaction(transactions):
     description = input("description: ")
+    # catches invalid entries
     while True:
         try:
+            # turns amount into float input
             amount = float(input("amount: "))
             if amount <= 0:
                 print("invalid amount entered")
@@ -25,16 +23,7 @@ def add_transaction(transactions):
             print("invalid value entered")
     category = input("category: ")
 
-    '''transaction = {"description": description,
-                    "amount": amount,
-                    "category": category}'''
-
     add_transactions_to_db(description, amount, category)
-
-    '''transactions.append(transaction)
-    # save transactions function saves the newly added transactions (RAM)
-    # to the SSD memory using files for permanent storage and loading
-    save_transactions(transactions)'''
 
 
 def show_transactions(transactions):
@@ -56,59 +45,66 @@ def show_transactions(transactions):
             f"{row_transaction[3]}"
         )
 
-def transactions_total(transactions):
-    total = 0
-
-    for transaction in transactions:
-        amount = transaction["amount"]
-        total += amount
-
-    return total
-
-def search_transactions(transactions):
-    # user enter item value to search
-    # value is checked through the list of dictionary values
-    # if value is found then "match" is printed
-    # once matched the transaction amount is also shown on screen
-
-    search_match = []
-
-    search = input("Enter transaction description for search").lower()
-
-    for transaction in transactions:
-        if search in transaction["description"].lower():
-            search_match.append(transaction)
+def transactions_total():
 
 
-    return  search_match
+    total = show_transactions_total()
+    print(f"Total of transactions is £{total:.2f}")
 
-def delete_transaction(transactions):
 
-    # choose to delete transaction by index
-    # needs to be validated so an index error isn't produced
+def search_transactions():
 
-    for number_it,transaction in enumerate(transactions, start=1):
+    search = input("Enter transaction description or category for search")
+    search_pattern = f"%{search}%"
+    search_results = search_transactions_in_db(search_pattern)
+
+    if not search_results:
+        print("No matching transactions found.")
+    else:
+        for transaction in search_results:
+            print(f"{transaction[0]}. {transaction[1]} - £{transaction[2]:.2f} - {transaction[3]}")
+
+
+def delete_transaction():
+
+
+    # choose to delete transaction by id
+    id_found = False
+    # present id and all transaction for user to see before deleting
+    transactions = load_all_db_transactions()
+    if not transactions:
+        print("No transactions found")
+        return
+
+    for row_transaction in transactions:
         print(
-            f"{number_it}.{transaction["description"]} - £{transaction["amount"]:.2f}")
-
+            f"{row_transaction[0]}. "
+            f"{row_transaction[1]} - "
+            f"£{row_transaction[2]:.2f} - "
+            f"{row_transaction[3]}"
+        )
+    # catches value error meaning entries that are not integers
     try:
-        choice = int(input("Enter number to delete transaction"))
-
+        transaction_id = int(input("Enter id to delete transaction"))
 
     except ValueError:
         print("Invalid input. Returning to main menu")
         return
-
-    if choice < 1 or choice > len(transactions):
-        print ("Invalid transaction number")
+    # if id is found rest of the logic continues
+    for row_transaction in transactions:
+        if transaction_id == row_transaction[0]:
+            id_found = True
+            break
+    # if id not found then remains false and stops function back to main menu
+    if not id_found :
+        print("Transaction id not found")
         return
-        # convert choice to index number
-    index = choice - 1
+
     confirmation = input("Are you sure? Yes(Y) or No(N): ")
 
-    if confirmation.lower() == "y" :
-            deleted_transaction = transactions.pop(index)
-            print(
-                f"Deleted: {deleted_transaction["description"]}" 
-                f"- £{deleted_transaction["amount"]:.2f}"
-            )
+    if confirmation.lower() == "y":
+        delete_transactions_from_db(transaction_id)
+    else:
+        print("Returning to menu")
+        return
+
