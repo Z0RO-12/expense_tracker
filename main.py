@@ -1,5 +1,3 @@
-import transactions
-
 from transactions import (
     add_transaction,
     show_transactions,
@@ -9,7 +7,7 @@ from transactions import (
 )
 
 # calls upon functions built from other files
-def main_menu(transactions):
+def main_menu():
     # main menu for the whole program to run through
     while True:
         try:
@@ -31,13 +29,13 @@ def main_menu(transactions):
             # add item into a dictionary that describes item
             # add transaction dictionary into list
 
-            add_transaction(transactions)
+            add_transaction()
 
 
 
         elif options == 2:
             #show list: transactions
-            show_transactions(transactions)
+            show_transactions()
 
         elif options == 3:
             # print value from transactions.py
@@ -54,13 +52,7 @@ def main_menu(transactions):
 
         elif options == 5:
             # delete transactions
-            # if empty or no transactions return error message
-
-            if not transactions:
-                print("No transactions to delete")
-                continue
-            else:
-                delete_transaction()
+            delete_transaction()
 
         elif options == 6:
             # deals with valid integer but invalid choice
@@ -74,7 +66,7 @@ def main_menu(transactions):
 
 
 if __name__ == "__main__":
-    main_menu(transactions)
+    main_menu()
 
 
 

@@ -7,7 +7,7 @@ from database import (
     delete_transactions_from_db,
 )
 
-def add_transaction(transactions):
+def add_transaction():
     description = input("description: ")
     # catches invalid entries
     while True:
@@ -26,7 +26,7 @@ def add_transaction(transactions):
     add_transactions_to_db(description, amount, category)
 
 
-def show_transactions(transactions):
+def show_transactions():
     # number transaction in a loop by each description and amount
     # print each transaction that is numbered
 
@@ -41,7 +41,7 @@ def show_transactions(transactions):
         print(
             f"{row_transaction[0]}. "
             f"{row_transaction[1]} - "
-            f"{row_transaction[2]} - "
+            f"{row_transaction[2]:.2f} - "
             f"{row_transaction[3]}"
         )
 
@@ -49,6 +49,9 @@ def transactions_total():
 
 
     total = show_transactions_total()
+    if total is None :
+        total = 0
+
     print(f"Total of transactions is £{total:.2f}")
 
 

@@ -1,9 +1,12 @@
 import sqlite3
 
+def get_connection():
+    # refactor to keep SQL connection in the same place for all database functions
+    return sqlite3.connect("expense_tracker.db")
 
 def load_all_db_transactions():
     # connect to database
-    connection = sqlite3.connect("expense_tracker.db")
+    connection = get_connection()
     cursor = connection.cursor()
 
     cursor.execute("SELECT * FROM transactions")
@@ -15,7 +18,7 @@ def load_all_db_transactions():
 
 def add_transactions_to_db(description, amount, category):
 
-    connection = sqlite3.connect("expense_tracker.db")
+    connection = get_connection()
     cursor = connection.cursor()
 
     # ? is a placeholder for the values we need to add to the db table
@@ -34,7 +37,7 @@ def show_transactions_total():
     # SUM totals all values under amount
     # fetchone allows for only one value to be returned for formatting
 
-    connection = sqlite3.connect("expense_tracker.db")
+    connection = get_connection()
     cursor = connection.cursor()
 
     cursor.execute("SELECT SUM(amount) FROM transactions")
@@ -47,7 +50,7 @@ def show_transactions_total():
 
 
 def search_transactions_in_db(search_pattern):
-    connection = sqlite3.connect("expense_tracker.db")
+    connection = get_connection()
     cursor = connection.cursor()
     # this allows for user to input description or category and for program to search for similar values
 
@@ -65,7 +68,7 @@ def search_transactions_in_db(search_pattern):
 def delete_transactions_from_db(transaction_id):
     # delete using placeholder and a variable called transaction_id to use delete
     # this is better than deleting using indexing or place values
-    connection = sqlite3.connect("expense_tracker.db")
+    connection = get_connection()
     cursor = connection.cursor()
 
     cursor.execute(
